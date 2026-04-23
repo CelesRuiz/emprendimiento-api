@@ -1,0 +1,72 @@
+@EmprendimientoApi_HostAddress = http://localhost:5157
+
+### Obtener todos los ingredientes
+GET {{EmprendimientoApi_HostAddress}}/api/ingredientes
+Accept: application/json
+
+###
+
+### Crear un ingrediente
+POST {{EmprendimientoApi_HostAddress}}/api/ingredientes
+Content-Type: application/json
+
+{
+    "nombre": "Azúcar",
+    "precioPorKilo": 1000
+}
+
+### Editar un ingrediente
+PUT {{EmprendimientoApi_HostAddress}}/api/ingredientes/1
+Content-Type: application/json
+
+{
+    "id": 1,
+    "nombre": "Azúcar",
+    "precioPorKilo": 1200
+}
+
+###
+
+### Borrar un ingrediente
+DELETE {{EmprendimientoApi_HostAddress}}/api/ingredientes/1
+
+###
+
+### Crear una receta
+POST {{EmprendimientoApi_HostAddress}}/api/recetas
+Content-Type: application/json
+
+{
+    "nombre": "Torta de chocolate",
+    "descripcion": "Torta esponjosa de chocolate",
+    "recetaIngredientes": [
+        {
+            "ingredienteId": 1,
+            "cantidadGramos": 200
+        }
+    ]
+}
+
+### Obtener todas las recetas
+GET {{EmprendimientoApi_HostAddress}}/api/recetas
+Accept: application/json
+
+### Crear un producto
+POST {{EmprendimientoApi_HostAddress}}/api/productos
+Content-Type: application/json
+
+{
+    "nombre": "Torta de chocolate",
+    "recetaId": 1,
+    "precioVenta": 5000,
+    "stockActual": 10,
+    "stockMinimo": 3
+}   
+### Crear una venta
+POST {{EmprendimientoApi_HostAddress}}/api/ventas
+Content-Type: application/json
+
+{
+    "productoId": 1,
+    "cantidad": 2
+}
