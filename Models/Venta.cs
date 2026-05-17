@@ -1,6 +1,6 @@
 namespace EmprendimientoApi.Models
 {
-    public class Venta
+    public class Venta: EntidadBase
     {
         public int Id { get; set; }
         public int ProductoId { get; set; }

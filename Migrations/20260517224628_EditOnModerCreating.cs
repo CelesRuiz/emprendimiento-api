@@ -5,7 +5,7 @@
 namespace EmprendimientoApi.Migrations
 {
     /// <inheritdoc />
-    public partial class AddProductos : Migration
+    public partial class EditOnModerCreating : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

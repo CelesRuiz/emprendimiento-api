@@ -17,24 +17,29 @@ namespace EmprendimientoApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Ingrediente>>> GetIngredientes()
-        {
-            return await _context.Ingredientes.ToListAsync();
-        }
+    public async Task<ActionResult<IEnumerable<Ingrediente>>> GetIngredientes([FromQuery] string? nombre)
+{
+    var query = _context.Ingredientes.AsQueryable();
 
-        [HttpPost]
-        public async Task<ActionResult<Ingrediente>> PostIngrediente(Ingrediente ingrediente)
-        {
-            _context.Ingredientes.Add(ingrediente);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetIngredientes), new { id = ingrediente.Id }, ingrediente);
-        }
+    if (!string.IsNullOrEmpty(nombre))
+        query = query.Where(i => i.Nombre.Contains(nombre));
 
-        [HttpPut("{id}")]
+    return await query.ToListAsync();
+}
+
+[HttpGet("{id}")]
+public async Task<ActionResult<Ingrediente>> GetIngrediente(int id)
+{
+    var ingrediente = await _context.Ingredientes.FindAsync(id);
+    if (ingrediente == null)
+        return NotFound(MensajeErrorHelper.ObtenerMensaje(MensajeError.IngredienteNoEncontrado));
+    return ingrediente;
+}
+[HttpPut("{id}")]
 public async Task<IActionResult> PutIngrediente(int id, Ingrediente ingrediente)
 {
-    if (id != ingrediente.Id)
-        return BadRequest();
+   if (id != ingrediente.Id)
+    return BadRequest(MensajeErrorHelper.ObtenerMensaje(MensajeError.IdNoCoincide));
 
     _context.Entry(ingrediente).State = EntityState.Modified;
     await _context.SaveChangesAsync();
@@ -46,7 +51,7 @@ public async Task<IActionResult> DeleteIngrediente(int id)
 {
     var ingrediente = await _context.Ingredientes.FindAsync(id);
     if (ingrediente == null)
-        return NotFound();
+        return NotFound(MensajeErrorHelper.ObtenerMensaje(MensajeError.IngredienteNoEncontrado));
 
     _context.Ingredientes.Remove(ingrediente);
     await _context.SaveChangesAsync();

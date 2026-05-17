@@ -1,25 +1,31 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\viejo\\EmprendimientoApi\\EmprendimientoApi\\EmprendimientoApi.csproj": {}
+    "C:\\Users\\Celes\\Desktop\\emprendimiento-api\\EmprendimientoApi.csproj": {}
   },
   "projects": {
-    "C:\\Users\\viejo\\EmprendimientoApi\\EmprendimientoApi\\EmprendimientoApi.csproj": {
+    "C:\\Users\\Celes\\Desktop\\emprendimiento-api\\EmprendimientoApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\viejo\\EmprendimientoApi\\EmprendimientoApi\\EmprendimientoApi.csproj",
+        "projectUniqueName": "C:\\Users\\Celes\\Desktop\\emprendimiento-api\\EmprendimientoApi.csproj",
         "projectName": "EmprendimientoApi",
-        "projectPath": "C:\\Users\\viejo\\EmprendimientoApi\\EmprendimientoApi\\EmprendimientoApi.csproj",
-        "packagesPath": "C:\\Users\\viejo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\viejo\\EmprendimientoApi\\EmprendimientoApi\\obj\\",
+        "projectPath": "C:\\Users\\Celes\\Desktop\\emprendimiento-api\\EmprendimientoApi.csproj",
+        "packagesPath": "C:\\Users\\Celes\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Celes\\Desktop\\emprendimiento-api\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\viejo\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Celes\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -43,6 +49,14 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.2.0, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[8.0.0, )"
@@ -56,6 +70,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[10.0.6, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[10.1.7, )"
             }
           },
           "imports": [

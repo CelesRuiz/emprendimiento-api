@@ -30,6 +30,12 @@ namespace EmprendimientoApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("ActualizadoEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreadoEn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -42,7 +48,7 @@ namespace EmprendimientoApi.Migrations
                     b.ToTable("Ingredientes");
                 });
 
-            modelBuilder.Entity("EmprendimientoApi.Models.Producto", b =>
+            modelBuilder.Entity("EmprendimientoApi.Models.MovimientoStock", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -50,30 +56,32 @@ namespace EmprendimientoApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("ActualizadoEn")
+                        .HasColumnType("datetime2");
 
-                    b.Property<decimal>("PrecioVenta")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("RecetaId")
+                    b.Property<int>("Cantidad")
                         .HasColumnType("int");
 
-                    b.Property<int>("StockActual")
+                    b.Property<DateTime>("CreadoEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProductoId")
                         .HasColumnType("int");
 
-                    b.Property<int>("StockMinimo")
+                    b.Property<int>("Tipo")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RecetaId");
+                    b.HasIndex("ProductoId");
 
-                    b.ToTable("Productos");
+                    b.ToTable("MovimientosStock");
                 });
 
-            modelBuilder.Entity("EmprendimientoApi.Models.Receta", b =>
+            modelBuilder.Entity("EmprendimientoApi.Models.Permiso", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -81,9 +89,11 @@ namespace EmprendimientoApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("ActualizadoEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreadoEn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -91,25 +101,134 @@ namespace EmprendimientoApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Recetas");
+                    b.ToTable("Permisos");
                 });
 
-            modelBuilder.Entity("EmprendimientoApi.Models.RecetaIngrediente", b =>
+            modelBuilder.Entity("EmprendimientoApi.Models.ProductoIngrediente", b =>
                 {
-                    b.Property<int>("RecetaId")
+                    b.Property<int>("ProductoId")
                         .HasColumnType("int");
 
                     b.Property<int>("IngredienteId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("CantidadGramos")
+                    b.Property<decimal>("Cantidad")
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("RecetaId", "IngredienteId");
+                    b.HasKey("ProductoId", "IngredienteId");
 
                     b.HasIndex("IngredienteId");
 
-                    b.ToTable("RecetaIngredientes");
+                    b.ToTable("ProductoIngredientes");
+                });
+
+            modelBuilder.Entity("EmprendimientoApi.Models.Proveedor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ActualizadoEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreadoEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Proveedores");
+                });
+
+            modelBuilder.Entity("EmprendimientoApi.Models.Rol", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ActualizadoEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreadoEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("EmprendimientoApi.Models.RolPermiso", b =>
+                {
+                    b.Property<int>("RolId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PermisoId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RolId", "PermisoId");
+
+                    b.HasIndex("PermisoId");
+
+                    b.ToTable("RolPermisos");
+                });
+
+            modelBuilder.Entity("EmprendimientoApi.Models.Usuario", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ActualizadoEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreadoEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RolId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RolId");
+
+                    b.ToTable("Usuarios");
                 });
 
             modelBuilder.Entity("EmprendimientoApi.Models.Venta", b =>
@@ -120,8 +239,14 @@ namespace EmprendimientoApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("ActualizadoEn")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("Cantidad")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("CreadoEn")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
@@ -139,39 +264,42 @@ namespace EmprendimientoApi.Migrations
                     b.ToTable("Ventas");
                 });
 
-            modelBuilder.Entity("EmprendimientoApi.Models.Producto", b =>
+            modelBuilder.Entity("Producto", b =>
                 {
-                    b.HasOne("EmprendimientoApi.Models.Receta", "Receta")
-                        .WithMany()
-                        .HasForeignKey("RecetaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Navigation("Receta");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ActualizadoEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreadoEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("PrecioVenta")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("StockMinimo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Productos");
                 });
 
-            modelBuilder.Entity("EmprendimientoApi.Models.RecetaIngrediente", b =>
+            modelBuilder.Entity("EmprendimientoApi.Models.MovimientoStock", b =>
                 {
-                    b.HasOne("EmprendimientoApi.Models.Ingrediente", "Ingrediente")
-                        .WithMany()
-                        .HasForeignKey("IngredienteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EmprendimientoApi.Models.Receta", "Receta")
-                        .WithMany("RecetaIngredientes")
-                        .HasForeignKey("RecetaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Ingrediente");
-
-                    b.Navigation("Receta");
-                });
-
-            modelBuilder.Entity("EmprendimientoApi.Models.Venta", b =>
-                {
-                    b.HasOne("EmprendimientoApi.Models.Producto", "Producto")
+                    b.HasOne("Producto", "Producto")
                         .WithMany()
                         .HasForeignKey("ProductoId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -180,9 +308,81 @@ namespace EmprendimientoApi.Migrations
                     b.Navigation("Producto");
                 });
 
-            modelBuilder.Entity("EmprendimientoApi.Models.Receta", b =>
+            modelBuilder.Entity("EmprendimientoApi.Models.ProductoIngrediente", b =>
                 {
-                    b.Navigation("RecetaIngredientes");
+                    b.HasOne("EmprendimientoApi.Models.Ingrediente", "Ingrediente")
+                        .WithMany()
+                        .HasForeignKey("IngredienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Producto", "Producto")
+                        .WithMany("ProductoIngredientes")
+                        .HasForeignKey("ProductoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ingrediente");
+
+                    b.Navigation("Producto");
+                });
+
+            modelBuilder.Entity("EmprendimientoApi.Models.RolPermiso", b =>
+                {
+                    b.HasOne("EmprendimientoApi.Models.Permiso", "Permiso")
+                        .WithMany("RolPermisos")
+                        .HasForeignKey("PermisoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EmprendimientoApi.Models.Rol", "Rol")
+                        .WithMany("RolPermisos")
+                        .HasForeignKey("RolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permiso");
+
+                    b.Navigation("Rol");
+                });
+
+            modelBuilder.Entity("EmprendimientoApi.Models.Usuario", b =>
+                {
+                    b.HasOne("EmprendimientoApi.Models.Rol", "Rol")
+                        .WithMany("Usuarios")
+                        .HasForeignKey("RolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Rol");
+                });
+
+            modelBuilder.Entity("EmprendimientoApi.Models.Venta", b =>
+                {
+                    b.HasOne("Producto", "Producto")
+                        .WithMany()
+                        .HasForeignKey("ProductoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Producto");
+                });
+
+            modelBuilder.Entity("EmprendimientoApi.Models.Permiso", b =>
+                {
+                    b.Navigation("RolPermisos");
+                });
+
+            modelBuilder.Entity("EmprendimientoApi.Models.Rol", b =>
+                {
+                    b.Navigation("RolPermisos");
+
+                    b.Navigation("Usuarios");
+                });
+
+            modelBuilder.Entity("Producto", b =>
+                {
+                    b.Navigation("ProductoIngredientes");
                 });
 #pragma warning restore 612, 618
         }
