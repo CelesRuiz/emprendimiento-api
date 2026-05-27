@@ -6,7 +6,14 @@ namespace EmprendimientoApi.Models
         Salida
     }
 
-    public class MovimientoStock: EntidadBase
+    public enum MotivoSalida
+    {
+        Venta,
+        Vencimiento,
+        Descarte
+    }
+
+    public class MovimientoStock : EntidadBase
     {
         public int Id { get; set; }
         public int ProductoId { get; set; }
@@ -14,5 +21,6 @@ namespace EmprendimientoApi.Models
         public TipoMovimiento Tipo { get; set; }
         public int Cantidad { get; set; }
         public DateTime Fecha { get; set; }
+        public MotivoSalida? MotivoSalida { get; set; }
     }
 }

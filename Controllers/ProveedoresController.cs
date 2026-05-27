@@ -17,15 +17,15 @@ namespace EmprendimientoApi.Controllers
         }
 
         [HttpGet]
-public async Task<ActionResult<IEnumerable<Proveedor>>> GetProveedores([FromQuery] string? nombre)
-{
-    var query = _context.Proveedores.AsQueryable();
+        public async Task<ActionResult<IEnumerable<Proveedor>>> GetProveedores([FromQuery] string? nombre)
+        {
+            var query = _context.Proveedores.AsQueryable();
 
-    if (!string.IsNullOrEmpty(nombre))
-        query = query.Where(p => p.Nombre.Contains(nombre));
+            if (!string.IsNullOrEmpty(nombre))
+                query = query.Where(p => p.Nombre.Contains(nombre));
 
-    return await query.ToListAsync();
-}
+            return await query.ToListAsync();
+        }
         [HttpGet("{id}")]
         public async Task<ActionResult<Proveedor>> GetProveedor(int id)
         {

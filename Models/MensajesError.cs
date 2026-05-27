@@ -3,7 +3,7 @@ namespace EmprendimientoApi.Models
     public enum MensajeError
     {
         ProductoNoEncontrado,
-        IngredienteNoEncontrado,
+        InsumoNoEncontrado,
         ProveedorNoEncontrado,
         UsuarioNoEncontrado,
         RolNoEncontrado,

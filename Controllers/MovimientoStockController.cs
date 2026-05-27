@@ -17,26 +17,26 @@ namespace EmprendimientoApi.Controllers
         }
 
         [HttpGet]
-public async Task<ActionResult<IEnumerable<MovimientoStock>>> GetMovimientos(
+        public async Task<ActionResult<IEnumerable<MovimientoStock>>> GetMovimientos(
     [FromQuery] TipoMovimiento? tipo,
     [FromQuery] DateTime? desde,
     [FromQuery] DateTime? hasta)
-{
-    var query = _context.MovimientosStock
-        .Include(m => m.Producto)
-        .AsQueryable();
+        {
+            var query = _context.MovimientosStock
+                .Include(m => m.Producto)
+                .AsQueryable();
 
-    if (tipo.HasValue)
-        query = query.Where(m => m.Tipo == tipo);
+            if (tipo.HasValue)
+                query = query.Where(m => m.Tipo == tipo);
 
-    if (desde.HasValue)
-        query = query.Where(m => m.Fecha >= desde);
+            if (desde.HasValue)
+                query = query.Where(m => m.Fecha >= desde);
 
-    if (hasta.HasValue)
-        query = query.Where(m => m.Fecha <= hasta);
+            if (hasta.HasValue)
+                query = query.Where(m => m.Fecha <= hasta);
 
-    return await query.OrderByDescending(m => m.Fecha).ToListAsync();
-}
+            return await query.OrderByDescending(m => m.Fecha).ToListAsync();
+        }
         [HttpGet("producto/{productoId}")]
         public async Task<ActionResult<IEnumerable<MovimientoStock>>> GetMovimientosPorProducto(int productoId)
         {
@@ -59,10 +59,44 @@ public async Task<ActionResult<IEnumerable<MovimientoStock>>> GetMovimientos(
         [HttpPost]
         public async Task<ActionResult<MovimientoStock>> PostMovimiento(MovimientoStock movimiento)
         {
-            movimiento.Fecha = DateTime.Now;
             _context.MovimientosStock.Add(movimiento);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetMovimientos), new { id = movimiento.Id }, movimiento);
+
+        }
+        [HttpGet("perdidas")]
+        public async Task<ActionResult<IEnumerable<PerdidaResponse>>> GetPerdidas(
+    [FromQuery] DateTime? desde,
+    [FromQuery] DateTime? hasta)
+        {
+            var query = _context.MovimientosStock
+                .Include(m => m.Producto)
+                .Where(m => m.MotivoSalida == MotivoSalida.Vencimiento ||
+                            m.MotivoSalida == MotivoSalida.Descarte)
+                .AsQueryable();
+
+            if (desde.HasValue)
+                query = query.Where(m => m.Fecha >= desde);
+
+            if (hasta.HasValue)
+                query = query.Where(m => m.Fecha <= hasta);
+
+            var perdidas = await query
+                .OrderByDescending(m => m.Fecha)
+                .Select(m => new PerdidaResponse(
+                    m.Producto!.Nombre,
+                    m.Cantidad,
+                    m.Producto.PrecioVenta,
+                    m.Cantidad * m.Producto.PrecioVenta,
+                    m.MotivoSalida!.Value,
+                    m.Fecha
+                ))
+                .ToListAsync();
+
+            return Ok(perdidas);
         }
     }
+
+
+
 }

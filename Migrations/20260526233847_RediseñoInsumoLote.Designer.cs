@@ -4,6 +4,7 @@ using EmprendimientoApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmprendimientoApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260526233847_RediseñoInsumoLote")]
+    partial class RediseñoInsumoLote
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,90 +24,6 @@ namespace EmprendimientoApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("EmprendimientoApi.Models.Combo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("ActualizadoEn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CreadoEn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("EsActivo")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Precio")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Combos");
-                });
-
-            modelBuilder.Entity("EmprendimientoApi.Models.ComboOpcion", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("ActualizadoEn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ComboId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreadoEn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("EsEleccion")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ProductoFijoId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ComboId");
-
-                    b.HasIndex("ProductoFijoId");
-
-                    b.ToTable("ComboOpciones");
-                });
-
-            modelBuilder.Entity("EmprendimientoApi.Models.ComboOpcionProducto", b =>
-                {
-                    b.Property<int>("ComboOpcionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductoId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ComboOpcionId", "ProductoId");
-
-                    b.HasIndex("ProductoId");
-
-                    b.ToTable("ComboOpcionProductos");
-                });
 
             modelBuilder.Entity("EmprendimientoApi.Models.Insumo", b =>
                 {
@@ -155,9 +74,6 @@ namespace EmprendimientoApi.Migrations
                     b.Property<decimal>("CantidadInicial")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<bool>("Cerrado")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("CreadoEn")
                         .HasColumnType("datetime2");
 
@@ -169,9 +85,6 @@ namespace EmprendimientoApi.Migrations
 
                     b.Property<int>("InsumoId")
                         .HasColumnType("int");
-
-                    b.Property<string>("MotivoCierre")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -200,9 +113,6 @@ namespace EmprendimientoApi.Migrations
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("MotivoSalida")
-                        .HasColumnType("int");
-
                     b.Property<int>("ProductoId")
                         .HasColumnType("int");
 
@@ -214,105 +124,6 @@ namespace EmprendimientoApi.Migrations
                     b.HasIndex("ProductoId");
 
                     b.ToTable("MovimientosStock");
-                });
-
-            modelBuilder.Entity("EmprendimientoApi.Models.Pedido", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("ActualizadoEn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CreadoEn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Estado")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("FechaPedido")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Idexterno")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OrigenPedido")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Pedidos");
-                });
-
-            modelBuilder.Entity("EmprendimientoApi.Models.PedidoItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("ActualizadoEn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Cantidad")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ComboId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreadoEn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("PedidoId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("PrecioUnitario")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("ProductoId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ComboId");
-
-                    b.HasIndex("PedidoId");
-
-                    b.HasIndex("ProductoId");
-
-                    b.ToTable("PedidoItems");
-                });
-
-            modelBuilder.Entity("EmprendimientoApi.Models.PedidoItemOpcion", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ComboOpcionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PedidoItemId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductoElegidoId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ComboOpcionId");
-
-                    b.HasIndex("PedidoItemId");
-
-                    b.HasIndex("ProductoElegidoId");
-
-                    b.ToTable("PedidoItemOpciones");
                 });
 
             modelBuilder.Entity("EmprendimientoApi.Models.Permiso", b =>
@@ -348,9 +159,6 @@ namespace EmprendimientoApi.Migrations
 
                     b.Property<DateTime>("ActualizadoEn")
                         .HasColumnType("datetime2");
-
-                    b.Property<decimal>("CostoProduccion")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("CreadoEn")
                         .HasColumnType("datetime2");
@@ -540,42 +348,6 @@ namespace EmprendimientoApi.Migrations
                     b.ToTable("Ventas");
                 });
 
-            modelBuilder.Entity("EmprendimientoApi.Models.ComboOpcion", b =>
-                {
-                    b.HasOne("EmprendimientoApi.Models.Combo", "Combo")
-                        .WithMany("Opciones")
-                        .HasForeignKey("ComboId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EmprendimientoApi.Models.Producto", "ProductoFijo")
-                        .WithMany()
-                        .HasForeignKey("ProductoFijoId");
-
-                    b.Navigation("Combo");
-
-                    b.Navigation("ProductoFijo");
-                });
-
-            modelBuilder.Entity("EmprendimientoApi.Models.ComboOpcionProducto", b =>
-                {
-                    b.HasOne("EmprendimientoApi.Models.ComboOpcion", "ComboOpcion")
-                        .WithMany("Productos")
-                        .HasForeignKey("ComboOpcionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EmprendimientoApi.Models.Producto", "Producto")
-                        .WithMany()
-                        .HasForeignKey("ProductoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ComboOpcion");
-
-                    b.Navigation("Producto");
-                });
-
             modelBuilder.Entity("EmprendimientoApi.Models.Lote", b =>
                 {
                     b.HasOne("EmprendimientoApi.Models.Insumo", "Insumo")
@@ -596,56 +368,6 @@ namespace EmprendimientoApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Producto");
-                });
-
-            modelBuilder.Entity("EmprendimientoApi.Models.PedidoItem", b =>
-                {
-                    b.HasOne("EmprendimientoApi.Models.Combo", "Combo")
-                        .WithMany()
-                        .HasForeignKey("ComboId");
-
-                    b.HasOne("EmprendimientoApi.Models.Pedido", "Pedido")
-                        .WithMany("Items")
-                        .HasForeignKey("PedidoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EmprendimientoApi.Models.Producto", "Producto")
-                        .WithMany()
-                        .HasForeignKey("ProductoId");
-
-                    b.Navigation("Combo");
-
-                    b.Navigation("Pedido");
-
-                    b.Navigation("Producto");
-                });
-
-            modelBuilder.Entity("EmprendimientoApi.Models.PedidoItemOpcion", b =>
-                {
-                    b.HasOne("EmprendimientoApi.Models.ComboOpcion", "ComboOpcion")
-                        .WithMany()
-                        .HasForeignKey("ComboOpcionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EmprendimientoApi.Models.PedidoItem", "PedidoItem")
-                        .WithMany("OpcionesElegidas")
-                        .HasForeignKey("PedidoItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EmprendimientoApi.Models.Producto", "ProductoElegido")
-                        .WithMany()
-                        .HasForeignKey("ProductoElegidoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ComboOpcion");
-
-                    b.Navigation("PedidoItem");
-
-                    b.Navigation("ProductoElegido");
                 });
 
             modelBuilder.Entity("EmprendimientoApi.Models.ProductoInsumo", b =>
@@ -706,26 +428,6 @@ namespace EmprendimientoApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Producto");
-                });
-
-            modelBuilder.Entity("EmprendimientoApi.Models.Combo", b =>
-                {
-                    b.Navigation("Opciones");
-                });
-
-            modelBuilder.Entity("EmprendimientoApi.Models.ComboOpcion", b =>
-                {
-                    b.Navigation("Productos");
-                });
-
-            modelBuilder.Entity("EmprendimientoApi.Models.Pedido", b =>
-                {
-                    b.Navigation("Items");
-                });
-
-            modelBuilder.Entity("EmprendimientoApi.Models.PedidoItem", b =>
-                {
-                    b.Navigation("OpcionesElegidas");
                 });
 
             modelBuilder.Entity("EmprendimientoApi.Models.Permiso", b =>

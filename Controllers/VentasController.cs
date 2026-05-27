@@ -17,26 +17,26 @@ namespace EmprendimientoApi.Controllers
         }
 
         [HttpGet]
-public async Task<ActionResult<IEnumerable<Venta>>> GetVentas(
+        public async Task<ActionResult<IEnumerable<Venta>>> GetVentas(
     [FromQuery] int? productoId,
     [FromQuery] DateTime? desde,
     [FromQuery] DateTime? hasta)
-{
-    var query = _context.Ventas
-        .Include(v => v.Producto)
-        .AsQueryable();
+        {
+            var query = _context.Ventas
+                .Include(v => v.Producto)
+                .AsQueryable();
 
-    if (productoId.HasValue)
-        query = query.Where(v => v.ProductoId == productoId);
+            if (productoId.HasValue)
+                query = query.Where(v => v.ProductoId == productoId);
 
-    if (desde.HasValue)
-        query = query.Where(v => v.Fecha >= desde);
+            if (desde.HasValue)
+                query = query.Where(v => v.Fecha >= desde);
 
-    if (hasta.HasValue)
-        query = query.Where(v => v.Fecha <= hasta);
+            if (hasta.HasValue)
+                query = query.Where(v => v.Fecha <= hasta);
 
-    return await query.OrderByDescending(v => v.Fecha).ToListAsync();
-}
+            return await query.OrderByDescending(v => v.Fecha).ToListAsync();
+        }
         [HttpPost]
         public async Task<ActionResult<Venta>> PostVenta(Venta venta)
         {
@@ -44,30 +44,37 @@ public async Task<ActionResult<IEnumerable<Venta>>> GetVentas(
             if (producto == null)
                 return NotFound(MensajeErrorHelper.ObtenerMensaje(MensajeError.ProductoNoEncontrado));
 
-
-            var stockActual = await _context.MovimientosStock
-                .Where(m => m.ProductoId == venta.ProductoId)
-                .SumAsync(m => m.Tipo == TipoMovimiento.Entrada ? m.Cantidad : -m.Cantidad);
-
-            if (stockActual < venta.Cantidad)
-                return BadRequest(MensajeErrorHelper.ObtenerMensaje(MensajeError.StockInsuficiente));
-
-            venta.PrecioTotal = venta.Cantidad * producto.PrecioVenta;
-            venta.Fecha = DateTime.Now;
-            _context.Ventas.Add(venta);
-
-            var movimiento = new MovimientoStock
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                ProductoId = venta.ProductoId,
-                Tipo = TipoMovimiento.Salida,
-                Cantidad = venta.Cantidad,
-                Fecha = DateTime.Now
-            };
-            _context.MovimientosStock.Add(movimiento);
+                var stockActual = await _context.MovimientosStock
+                    .Where(m => m.ProductoId == venta.ProductoId)
+                    .SumAsync(m => m.Tipo == TipoMovimiento.Entrada ? m.Cantidad : -m.Cantidad);
 
-            await _context.SaveChangesAsync();
+                if (stockActual < venta.Cantidad)
+                    return BadRequest(MensajeErrorHelper.ObtenerMensaje(MensajeError.StockInsuficiente));
 
-            return CreatedAtAction(nameof(GetVentas), new { id = venta.Id }, venta);
+                venta.PrecioTotal = venta.Cantidad * producto.PrecioVenta;
+                _context.Ventas.Add(venta);
+
+                var movimiento = new MovimientoStock
+                {
+                    ProductoId = venta.ProductoId,
+                    Tipo = TipoMovimiento.Salida,
+                    Cantidad = venta.Cantidad
+                };
+                _context.MovimientosStock.Add(movimiento);
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return CreatedAtAction(nameof(GetVentas), new { id = venta.Id }, venta);
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+                return StatusCode(500, "Error procesando la venta");
+            }
         }
     }
 }

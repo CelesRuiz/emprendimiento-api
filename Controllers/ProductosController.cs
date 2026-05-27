@@ -17,55 +17,61 @@ namespace EmprendimientoApi.Controllers
         }
 
         [HttpGet]
-public async Task<ActionResult<IEnumerable<Producto>>> GetProductos(
+        public async Task<ActionResult<IEnumerable<Producto>>> GetProductos(
     [FromQuery] string? nombre,
     [FromQuery] bool? stockBajo)
-{
-    var query = _context.Productos
-        .Include(p => p.ProductoIngredientes)
-        .ThenInclude(pi => pi.Ingrediente)
-        .AsQueryable();
+        {
+            var query = _context.Productos
+                .Include(p => p.ProductoInsumos)
+                .ThenInclude(pi => pi.Insumo)
+                .AsQueryable();
 
-    if (!string.IsNullOrEmpty(nombre))
-        query = query.Where(p => p.Nombre.Contains(nombre));
+            if (!string.IsNullOrEmpty(nombre))
+                query = query.Where(p => p.Nombre.Contains(nombre));
 
-    if (stockBajo == true)
-    {
-        var stockPorProducto = await _context.MovimientosStock
-            .GroupBy(m => m.ProductoId)
-            .Select(g => new
+            if (stockBajo == true)
             {
-                ProductoId = g.Key,
-                StockActual = g.Sum(m => m.Tipo == TipoMovimiento.Entrada ? m.Cantidad : -m.Cantidad)
-            })
-            .ToListAsync();
+                query = query.Where(p => _context.MovimientosStock
+                    .Where(m => m.ProductoId == p.Id)
+                    .Sum(m => m.Tipo == TipoMovimiento.Entrada ? m.Cantidad : -m.Cantidad) < p.StockMinimo);
+            }
 
-        var productosConStockBajo = stockPorProducto
-            .Where(s => {
-                var producto = _context.Productos.Find(s.ProductoId);
-                return producto != null && s.StockActual < producto.StockMinimo;
-            })
-            .Select(s => s.ProductoId)
-            .ToList();
-
-        query = query.Where(p => productosConStockBajo.Contains(p.Id));
-    }
-
-    return await query.ToListAsync();
-}
+            return await query.ToListAsync();
+        }
         [HttpGet("{id}")]
         public async Task<ActionResult<Producto>> GetProducto(int id)
-{
+        {
             var producto = await _context.Productos
-                .Include(p => p.ProductoIngredientes)
-                .ThenInclude(pi => pi.Ingrediente)
+                .Include(p => p.ProductoInsumos)
+                .ThenInclude(pi => pi.Insumo)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (producto == null)
                 return NotFound(MensajeErrorHelper.ObtenerMensaje(MensajeError.ProductoNoEncontrado));
 
-        return producto;
-}
+            return producto;
+        }
+
+        [HttpGet("stock")]
+        public async Task<ActionResult<IEnumerable<ProductoStockResponse>>> GetStockProductos()
+        {
+            var stocks = await _context.Productos
+                .Select(p => new ProductoStockResponse(
+                    p.Id,
+                    p.Nombre,
+                    p.StockMinimo,
+                    _context.MovimientosStock
+                        .Where(m => m.ProductoId == p.Id)
+                        .Sum(m => m.Tipo == TipoMovimiento.Entrada ? m.Cantidad : -m.Cantidad),
+                    false // Calculamos el booleano abajo por limitaciones de LINQ sum
+                ))
+                .ToListAsync();
+
+
+            var resultado = stocks.Select(s => s with { EsStockBajo = s.StockActual < s.StockMinimo });
+
+            return Ok(resultado);
+        }
         [HttpPost]
         public async Task<ActionResult<Producto>> PostProducto(Producto producto)
         {

@@ -5,7 +5,7 @@ namespace EmprendimientoApi.Models
         public static string ObtenerMensaje(MensajeError error) => error switch
         {
             MensajeError.ProductoNoEncontrado => "El producto no fue encontrado.",
-            MensajeError.IngredienteNoEncontrado => "El ingrediente no fue encontrado.",
+            MensajeError.InsumoNoEncontrado => "El insumo no fue encontrado.",
             MensajeError.ProveedorNoEncontrado => "El proveedor no fue encontrado.",
             MensajeError.UsuarioNoEncontrado => "El usuario no fue encontrado.",
             MensajeError.RolNoEncontrado => "El rol no fue encontrado.",

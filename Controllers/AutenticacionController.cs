@@ -76,7 +76,7 @@ namespace EmprendimientoApi.Controllers
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddHours(8),
+                expires: DateTime.UtcNow.AddHours(8),
                 signingCredentials: creds
             );
 
