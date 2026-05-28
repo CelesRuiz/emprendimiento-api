@@ -64,7 +64,7 @@ namespace EmprendimientoApi.Controllers
                 }
             }
 
-            // Registrar el movimiento de entrada del producto terminado
+
             var movimiento = new MovimientoStock
             {
                 ProductoId = request.ProductoId,
@@ -77,6 +77,38 @@ namespace EmprendimientoApi.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { mensaje = "Producción registrada correctamente", movimientoId = movimiento.Id });
+        }
+        [HttpPost("externo")]
+        public async Task<IActionResult> RecibirPedidoExterno([FromBody] PedidoExternoRequest request)
+        {
+            var pedido = new Pedido
+            {
+                FechaPedido = DateTime.UtcNow,
+                OrigenPedido = request.Origen,
+                Idexterno = request.IdExterno,
+                Estado = EstadoPedido.Pendiente
+            };
+
+            foreach (var itemRequest in request.Items)
+            {
+                var producto = await _context.Productos
+                    .FirstOrDefaultAsync(p => p.Nombre.ToLower() == itemRequest.NombreProducto.ToLower());
+
+                if (producto == null)
+                    return BadRequest($"Producto '{itemRequest.NombreProducto}' no encontrado");
+
+                pedido.Items.Add(new PedidoItem
+                {
+                    ProductoId = producto.Id,
+                    Cantidad = itemRequest.Cantidad,
+                    PrecioUnitario = itemRequest.PrecioUnitario
+                });
+            }
+
+            _context.Pedidos.Add(pedido);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { mensaje = "Pedido recibido correctamente", pedidoId = pedido.Id });
         }
     }
 }
