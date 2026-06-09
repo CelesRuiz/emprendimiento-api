@@ -10,6 +10,8 @@ namespace EmprendimientoApi.Models
         EmailYaRegistrado,
         CredencialesInvalidas,
         StockInsuficiente,
-        IdNoCoincide
+        IdNoCoincide,
+        MovimientoNoEncontrado,
+        NoSePuedeAnularAnulacion,
     }
 }

@@ -70,7 +70,10 @@ namespace EmprendimientoApi.Controllers
                 ProductoId = request.ProductoId,
                 Tipo = TipoMovimiento.Entrada,
                 Cantidad = request.Cantidad,
-                Fecha = DateTime.UtcNow
+                Fecha = DateTime.UtcNow,
+                FechaVencimiento = producto.DiasMaxFrescura > 0
+                 ? DateTime.UtcNow.AddDays(producto.DiasMaxFrescura)
+                 : null
             };
 
             _context.MovimientosStock.Add(movimiento);

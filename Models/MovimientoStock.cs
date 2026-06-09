@@ -22,5 +22,8 @@ namespace EmprendimientoApi.Models
         public int Cantidad { get; set; }
         public DateTime Fecha { get; set; }
         public MotivoSalida? MotivoSalida { get; set; }
+        public DateTime? FechaVencimiento { get; set; }
+        public int? MovimientoAnuladoId { get; set; }
+        public MovimientoStock? MovimientoAnulado { get; set; }
     }
 }

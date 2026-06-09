@@ -5,12 +5,14 @@ namespace EmprendimientoApi.Models
 
 
     public record ProductoStockResponse(
-        int ProductoId,
-        string Nombre,
-        int StockMinimo,
-        int StockActual,
-        bool EsStockBajo
-    );
+       int ProductoId,
+       string Nombre,
+       int StockMinimo,
+       int StockActual,
+       bool EsStockBajo,
+       int DiasMaxFrescura,
+       DateTime? UltimaProduccion
+   );
 
     public record MovimientoRequest(
         int ProductoId,
@@ -95,5 +97,11 @@ namespace EmprendimientoApi.Models
     public record ActualizarEstadoPedidoRequest(EstadoPedido NuevoEstado);
 
 
-
 }
+
+
+
+
+
+
+

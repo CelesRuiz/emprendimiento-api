@@ -13,6 +13,8 @@ namespace EmprendimientoApi.Models
             MensajeError.CredencialesInvalidas => "Email o contraseña incorrectos.",
             MensajeError.StockInsuficiente => "Stock insuficiente para realizar la operación.",
             MensajeError.IdNoCoincide => "El ID no coincide con el recurso.",
+            MensajeError.MovimientoNoEncontrado => "Movimiento no encontrado.",
+            MensajeError.NoSePuedeAnularAnulacion => "Este movimiento es una anulación, no se puede anular nuevamente.",
             _ => "Ocurrió un error inesperado."
         };
     }

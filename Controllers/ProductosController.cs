@@ -63,10 +63,15 @@ namespace EmprendimientoApi.Controllers
                     _context.MovimientosStock
                         .Where(m => m.ProductoId == p.Id)
                         .Sum(m => m.Tipo == TipoMovimiento.Entrada ? m.Cantidad : -m.Cantidad),
-                    false // Calculamos el booleano abajo por limitaciones de LINQ sum
+                    false,
+                    p.DiasMaxFrescura,
+                    _context.MovimientosStock
+                        .Where(m => m.ProductoId == p.Id && m.Tipo == TipoMovimiento.Entrada)
+                        .OrderByDescending(m => m.Fecha)
+                        .Select(m => (DateTime?)m.Fecha)
+                        .FirstOrDefault()
                 ))
                 .ToListAsync();
-
 
             var resultado = stocks.Select(s => s with { EsStockBajo = s.StockActual < s.StockMinimo });
 

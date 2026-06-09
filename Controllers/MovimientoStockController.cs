@@ -18,9 +18,10 @@ namespace EmprendimientoApi.Controllers
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MovimientoStock>>> GetMovimientos(
-    [FromQuery] TipoMovimiento? tipo,
-    [FromQuery] DateTime? desde,
-    [FromQuery] DateTime? hasta)
+            [FromQuery] TipoMovimiento? tipo,
+            [FromQuery] MotivoSalida? motivo,
+            [FromQuery] DateTime? desde,
+            [FromQuery] DateTime? hasta)
         {
             var query = _context.MovimientosStock
                 .Include(m => m.Producto)
@@ -29,11 +30,14 @@ namespace EmprendimientoApi.Controllers
             if (tipo.HasValue)
                 query = query.Where(m => m.Tipo == tipo);
 
+            if (motivo.HasValue)
+                query = query.Where(m => m.MotivoSalida == motivo);
+
             if (desde.HasValue)
                 query = query.Where(m => m.Fecha >= desde);
 
             if (hasta.HasValue)
-                query = query.Where(m => m.Fecha <= hasta);
+                query = query.Where(m => m.Fecha <= hasta.Value.AddDays(1).AddTicks(-1));
 
             return await query.OrderByDescending(m => m.Fecha).ToListAsync();
         }
@@ -59,6 +63,7 @@ namespace EmprendimientoApi.Controllers
         [HttpPost]
         public async Task<ActionResult<MovimientoStock>> PostMovimiento(MovimientoStock movimiento)
         {
+            movimiento.Fecha = DateTime.UtcNow;
             _context.MovimientosStock.Add(movimiento);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetMovimientos), new { id = movimiento.Id }, movimiento);
@@ -95,8 +100,38 @@ namespace EmprendimientoApi.Controllers
 
             return Ok(perdidas);
         }
+
+
+        [HttpPost("anular/{id}")]
+        public async Task<IActionResult> AnularMovimiento(int id)
+        {
+            var original = await _context.MovimientosStock.FindAsync(id);
+            if (original == null)
+                return NotFound(MensajeErrorHelper.ObtenerMensaje(MensajeError.MovimientoNoEncontrado));
+
+            if (original.MovimientoAnuladoId != null)
+                return BadRequest(MensajeErrorHelper.ObtenerMensaje(MensajeError.NoSePuedeAnularAnulacion));
+
+            var tipoContrario = original.Tipo == TipoMovimiento.Entrada
+                ? TipoMovimiento.Salida
+                : TipoMovimiento.Entrada;
+
+            var anulacion = new MovimientoStock
+            {
+                ProductoId = original.ProductoId,
+                Tipo = tipoContrario,
+                Cantidad = original.Cantidad,
+                Fecha = DateTime.UtcNow,
+                MovimientoAnuladoId = original.Id
+            };
+
+            _context.MovimientosStock.Add(anulacion);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { mensaje = "Movimiento anulado correctamente", anulacionId = anulacion.Id });
+        }
+
+
+
     }
-
-
-
 }
