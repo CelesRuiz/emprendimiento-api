@@ -25,5 +25,6 @@ namespace EmprendimientoApi.Models
         public DateTime? FechaVencimiento { get; set; }
         public int? MovimientoAnuladoId { get; set; }
         public MovimientoStock? MovimientoAnulado { get; set; }
+        public decimal? CantidadActual { get; set; }
     }
 }

@@ -107,5 +107,58 @@ namespace EmprendimientoApi.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+        [HttpGet("{id}/lotes")]
+        public async Task<ActionResult<IEnumerable<LoteProductoResponse>>> GetLotesProducto(int id, [FromQuery] bool historial = false)
+        {
+            var producto = await _context.Productos.FindAsync(id);
+            if (producto == null)
+                return NotFound(MensajeErrorHelper.ObtenerMensaje(MensajeError.ProductoNoEncontrado));
+
+            // IDs de movimientos anulados
+            var idsAnulados = await _context.MovimientosStock
+                .Where(m => m.MovimientoAnuladoId != null)
+                .Select(m => m.MovimientoAnuladoId!.Value)
+                .ToListAsync();
+
+            // Lotes = movimientos de Entrada
+            var query = _context.MovimientosStock
+                .Where(m => m.ProductoId == id && m.Tipo == TipoMovimiento.Entrada)
+                .AsQueryable();
+
+            // Si NO es historial, solo los activos (cantidad > 0 y no anulados)
+            if (!historial)
+            {
+                query = query.Where(m => m.CantidadActual > 0 && !idsAnulados.Contains(m.Id));
+            }
+
+            var lotes = await query.OrderBy(m => m.Fecha).ToListAsync();
+
+            var hoy = DateTime.UtcNow;
+            var resultado = lotes.Select(m =>
+            {
+                string estado;
+                if (m.FechaVencimiento == null)
+                    estado = "Activo";
+                else if (m.FechaVencimiento < hoy)
+                    estado = "Vencido";
+                else if ((m.FechaVencimiento.Value - hoy).TotalDays <= 2)
+                    estado = "PorVencer";
+                else
+                    estado = "Activo";
+
+                return new LoteProductoResponse(
+                    m.Id,
+                    m.Fecha,
+                    m.Cantidad,
+                    m.CantidadActual,
+                    m.FechaVencimiento,
+                    estado,
+                    idsAnulados.Contains(m.Id)
+                );
+            });
+
+            return Ok(resultado);
+        }
     }
+
 }

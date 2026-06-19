@@ -70,10 +70,11 @@ namespace EmprendimientoApi.Controllers
                 ProductoId = request.ProductoId,
                 Tipo = TipoMovimiento.Entrada,
                 Cantidad = request.Cantidad,
+                CantidadActual = request.Cantidad,
                 Fecha = DateTime.UtcNow,
                 FechaVencimiento = producto.DiasMaxFrescura > 0
-                 ? DateTime.UtcNow.AddDays(producto.DiasMaxFrescura)
-                 : null
+            ? DateTime.UtcNow.AddDays(producto.DiasMaxFrescura)
+            : null
             };
 
             _context.MovimientosStock.Add(movimiento);
@@ -81,6 +82,7 @@ namespace EmprendimientoApi.Controllers
 
             return Ok(new { mensaje = "Producción registrada correctamente", movimientoId = movimiento.Id });
         }
+
 
     }
 }

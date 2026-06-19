@@ -96,6 +96,35 @@ namespace EmprendimientoApi.Models
 
     public record ActualizarEstadoPedidoRequest(EstadoPedido NuevoEstado);
 
+    public record MovimientoStockResponse(
+       int Id,
+       int ProductoId,
+       string NombreProducto,
+       TipoMovimiento Tipo,
+       int Cantidad,
+       DateTime Fecha,
+       MotivoSalida? MotivoSalida,
+       DateTime? FechaVencimiento,
+       bool EstaAnulado,
+       DateTime CreadoEn,
+       DateTime ActualizadoEn
+   );
+
+    public record SalidaRequest(
+     int ProductoId,
+     int Cantidad,
+     MotivoSalida MotivoSalida
+ );
+
+    public record LoteProductoResponse(
+       int Id,
+       DateTime Fecha,
+       int Cantidad,
+       decimal? CantidadActual,
+       DateTime? FechaVencimiento,
+       string Estado,
+       bool EstaAnulado
+   );
 
 }
 
