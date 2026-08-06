@@ -10,7 +10,9 @@ namespace EmprendimientoApi.Models
     {
         Venta,
         Vencimiento,
-        Descarte
+        Descarte,
+        AjusteInventario
+
     }
 
     public class MovimientoStock : EntidadBase

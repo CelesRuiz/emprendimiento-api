@@ -69,7 +69,8 @@ namespace EmprendimientoApi.Controllers
                         .Where(m => m.ProductoId == p.Id && m.Tipo == TipoMovimiento.Entrada)
                         .OrderByDescending(m => m.Fecha)
                         .Select(m => (DateTime?)m.Fecha)
-                        .FirstOrDefault()
+                        .FirstOrDefault(),
+                    p.CostoProduccion
                 ))
                 .ToListAsync();
 
@@ -159,6 +160,60 @@ namespace EmprendimientoApi.Controllers
 
             return Ok(resultado);
         }
+        [HttpGet("{id}/historial")]
+        public async Task<ActionResult<IEnumerable<EventoHistorialResponse>>> GetHistorial(
+    int id,
+    [FromQuery] string? tipo,
+    [FromQuery] DateTime? desde,
+    [FromQuery] DateTime? hasta)
+        {
+            var producto = await _context.Productos.FindAsync(id);
+            if (producto == null)
+                return NotFound(MensajeErrorHelper.ObtenerMensaje(MensajeError.ProductoNoEncontrado));
+
+
+            var idsAnulados = await _context.MovimientosStock
+                .Where(m => m.MovimientoAnuladoId != null)
+                .Select(m => m.MovimientoAnuladoId!.Value)
+                .ToListAsync();
+
+            var query = _context.MovimientosStock
+                .Where(m => m.ProductoId == id && m.MovimientoAnuladoId == null)
+                .AsQueryable();
+
+            if (desde.HasValue)
+                query = query.Where(m => m.Fecha >= desde);
+
+            if (hasta.HasValue)
+                query = query.Where(m => m.Fecha <= hasta.Value.AddDays(1).AddTicks(-1));
+
+            // Filtrar por tipo
+            if (tipo == "produccion")
+                query = query.Where(m => m.Tipo == TipoMovimiento.Entrada);
+            else if (tipo == "consumo")
+                query = query.Where(m => m.Tipo == TipoMovimiento.Salida);
+
+            var movimientos = await query.OrderBy(m => m.Fecha).ToListAsync();
+
+            var resultado = movimientos.Select(m =>
+            {
+                string tipoEvento;
+                if (m.Tipo == TipoMovimiento.Entrada)
+                    tipoEvento = "Produccion";
+                else
+                    tipoEvento = m.MotivoSalida?.ToString() ?? "Salida";
+
+                return new EventoHistorialResponse(
+                    m.Fecha,
+                    tipoEvento,
+                    m.Cantidad,
+                    idsAnulados.Contains(m.Id)
+                );
+            });
+
+            return Ok(resultado);
+        }
     }
+
 
 }

@@ -11,7 +11,8 @@ namespace EmprendimientoApi.Models
        int StockActual,
        bool EsStockBajo,
        int DiasMaxFrescura,
-       DateTime? UltimaProduccion
+       DateTime? UltimaProduccion,
+       decimal CostoProduccion
    );
 
     public record MovimientoRequest(
@@ -125,6 +126,36 @@ namespace EmprendimientoApi.Models
        string Estado,
        bool EstaAnulado
    );
+
+    public record EventoHistorialResponse(
+     DateTime Fecha,
+     string TipoEvento,
+     int Cantidad,
+     bool EstaAnulado
+ );
+
+    public record InsumoConStockResponse(
+       int Id,
+       string Nombre,
+       string UnidadMedida,
+       decimal PrecioPorUnidad,
+       decimal StockActual,
+       int StockMinimo
+   );
+    public record ConfirmarInventarioRequest(
+     string Motivo,
+     List<AjusteInventarioItem> Ajustes
+ );
+
+    public record AjusteInventarioItem(
+        string Tipo,
+        int? InsumoId,
+        int? ProductoId,
+        decimal CantidadAjuste,
+        DateTime? FechaVencimiento
+    );
+
+
 
 }
 

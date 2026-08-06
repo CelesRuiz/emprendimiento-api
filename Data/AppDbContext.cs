@@ -26,7 +26,7 @@ namespace EmprendimientoApi.Data
         public DbSet<Pedido> Pedidos { get; set; }
         public DbSet<PedidoItem> PedidoItems { get; set; }
         public DbSet<PedidoItemOpcion> PedidoItemOpciones { get; set; }
-
+        public DbSet<AjusteStock> AjustesStock { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ProductoInsumo>()
@@ -69,8 +69,17 @@ namespace EmprendimientoApi.Data
             modelBuilder.Entity<Combo>()
                 .Property(c => c.Precio)
                 .HasColumnType("decimal(18,2)");
+
             modelBuilder.Entity<PedidoItem>()
                 .Property(pi => pi.PrecioUnitario)
+                .HasColumnType("decimal(18,2)");
+                
+            modelBuilder.Entity<AjusteStock>()
+                .Property(a => a.CantidadAjuste)
+                .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<AjusteStock>()
+                .Property(a => a.DiferenciaDinero)
                 .HasColumnType("decimal(18,2)");
         }
 

@@ -92,5 +92,23 @@ namespace EmprendimientoApi.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+        [HttpGet("con-stock")]
+        public async Task<ActionResult<IEnumerable<InsumoConStockResponse>>> GetInsumosConStock()
+        {
+            var insumos = await _context.Insumos
+                .Select(i => new InsumoConStockResponse(
+                    i.Id,
+                    i.Nombre,
+                    i.UnidadMedida.ToString(),
+                    i.PrecioPorUnidad,
+                    _context.Lotes
+                        .Where(l => l.InsumoId == i.Id && !l.Cerrado)
+                        .Sum(l => l.CantidadActual),
+                    i.StockMinimo
+                ))
+                .ToListAsync();
+
+            return Ok(insumos);
+        }
     }
 }
